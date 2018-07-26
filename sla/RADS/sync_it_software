@@ -1,0 +1,4 @@
+set  RSYNC_PASSWORD e2g1j1n1
+rsync -avz --del radsuser@rads.tudelft.nl::rads/code .
+rsync -avz --del radsuser@rads.tudelft.nl::rads/text .
+rsync -avz --del radsuser@rads.tudelft.nl::rads/tables .

@@ -1,0 +1,246 @@
+Description of the OI.v2 Monthly SST Analysis (v2 indicates version 2)
+
+
+The NOAA OI.v2 SST monthly fields are derived by a linear interpolation of
+the weekly optimum interpolation (OI) version 2 fields to daily fields then
+averaging the daily values over a month. The monthly fields are in the
+same format and spatial resolution as the weekly fields.
+
+The OI.v2 analysis is described in Reynolds, R.W., N.A. Rayner, T.M. 
+Smith, D.C. Stokes, and W. Wang, 2001: An Improved In Situ and Satellite 
+SST Analysis for Climate, J. Climate, submitted. The paper has been 
+accepted by the Journal of Climate subject to minor revisions. A preprint 
+of the paper can be obtained in the directory:
+
+   ftp://ftp.ncep.noaa.gov/pub/cmb/People/reynolds/oiv2pap/
+
+The paper is presently in two word perfect files (oiv2_text.wpd and
+oiv2_figs.wpd) and two word files (oiv2_text.doc and oiv2_figs.doc).
+The first file is the text, the second is the figures.)
+
+
+
+These fields are available in individual monthly files.  Each file is named 
+oiv2mon.{YYYYMM}, where {YYYYMM} is the year and month of the field. 
+
+Files in this directory ending with the extension '.gz' have been compressed 
+using the gzip utility.
+
+An interim file with just the most recent month or partial month is
+available in oiv2mon.month.  This file will be re-written each week if 
+we have sufficient weekly fields to linearly interpolate to the 15th 
+of the month or beyond.
+
+
+
+The files were written in IEEE binary (big-endian).
+Each file contains three records described as follows:
+   rec 1: date and version number        (8 4-byte integer words)
+   rec 2: gridded sst values in degC     (360*180 4-byte real words)
+   rec 3: gridded ice concentration      (360*180 1-byte integer words)
+
+The ice field shows the approximate monthly average of the ice 
+concentration values input to the SST analysis.  Ice concentration is 
+stored as the percentage of are of area covered.  For the ice fields, the 
+value 122 represents land or coast.  Note, the ice land mask is a function 
+of the ice analysis and may change periodically.
+
+The sst and ice fields are on a 1-degree (360 lon by 180 lat) grid.
+The first gridbox of each array is centered on 0.5E, 89.5S.  The points
+move eastward to 359.5E, then northward to 89.5N.
+
+
+The OI analysis is done over all ocean areas and the Great Lakes.  
+There is no analysis over land.  The land values are filled by a Cressman
+interpolation to produce a complete grid for possible interpolation to 
+other grids.  The ocean and land areas are defined by a land sea mask.  
+This data set is a binary, direct access file, lstags.ondeg.dat, which 
+is included in the same directory.  The spatial grid is defined identically 
+to the grid for the SST arrays.  The values in ls.dat are set to 1 over 
+the ocean and 0 over land. It can be read by the following fortran code:
+
+      REAL*4 TAGLS(360,180)
+
+c
+c NOTE, recl definition below depends on compiler
+c   (number of 4-byte words OR number of bytes)
+c   choose one of following krecl definitintions
+c     parameter(krecl=360*180)        ! number of 4-byte words
+      parameter(krecl=360*180*4)      ! number of bytes
+      open (24,file='lstags.onedeg.dat',form='unformatted',
+     1   access='direct',recl=krecl)
+
+c
+c     Read in land sea tags (1 for ocean; 0 for land)
+c
+      READ (24,rec=1) TAGLS
+      STOP 1
+      END
+
+
+The following sample fortran program reads the data and prints
+out sample values:
+
+
+c--------------  start of code -----------------------------------------
+
+      program rdoimonv2 
+c  read OI.v2 SST file and land mask and print selected values.
+
+c  sst   - sea surface temperature array (deg C)
+c  ice   - ice concentration array (%)  (0-100,   >100 = land or coast)
+c  iyrst - year of start date of analysis
+c  imst  - month of start date of analysis
+c  idst  - day of start date of analysis
+c  iyrnd - year of end date of analysis
+c  imnd  - month of end date of analysis
+c  idnd  - day of end date of analysis
+c  ndays - number of days in analysis (start date thru enddate)
+c  index - analysis version for reference
+c  xlon  - longitude of center of grid square
+c  xlat  - latitude of center of grid square
+c  tagls - land/sea tag array (0=land, 1=water)
+
+c  NOTES:  
+c   - land values for sst do not necessarily coincide with land values 
+c       from ice analysis
+c   - recl definition for the direct access open depends on the compiler
+c     (number of 4-byte words OR number of bytes).
+c     Choose the appropiate parameter statement for krecl
+c  
+
+      implicit none
+c
+      integer krecl
+      parameter(krecl=360*180)        ! number of 4-byte words
+c     parameter(krecl=360*180*4)      ! number of bytes
+
+      real*4 sst(360,180),xlon,xlat
+      integer*4 iyrst,imst,idst,iyrnd,imnd,idnd,ndays,index,i,j
+      integer*4 ice(360,180)
+      character*1 cice(360,180)
+      real*4 tagls(360,180)
+
+      open (24,file='lstags.onedeg.dat',form='unformatted',
+     1   access='direct',recl=krecl)
+
+c
+c     Read in land sea tags (1 for ocean; 0 for land)
+c
+      read (24,rec=1) tagls
+
+
+c   date string used in filename represents the  mid-week date
+c            weeks prior 1990 are centered on Sunday 
+c            weeks in 1990 and onward are centered on Wednesday
+
+      open(11,file='oiv2mon.199308',form='unformatted')
+
+      read(11) iyrst,imst,idst,iyrnd,imnd,idnd,ndays,index
+      read(11) ((sst(i,j),i=1,360),j=1,180)
+      read(11) ((cice(i,j),i=1,360),j=1,180)
+
+      print '(a,i4,1x,i2,1x,i2)', 'start date: ',iyrst,imst,idst
+      print '(a,i4,1x,i2,1x,i2)', '  end date: ',iyrnd, imnd,idnd
+      print             '(a,i2)', '  num days: ',ndays
+      print          '(a,i10,/)', '     index: ',index
+  
+c ...choosing one longitude
+      i = 181
+c  ... determine longitude of middle of grid boxes with this index
+      xlon = float(i) - 0.5  
+
+c  .... loop thru several latitudes (decrementing to run North->South)
+      do j = 180,150,-1  
+        ice(i,j)=ichar(cice(i,j))
+        xlat = float(j) - 90.5
+        print 125, 'lon = ',xlon,'lat = ',xlat,'sst = ',sst(i,j),
+     1     'ice = ',ice(i,j),'tagls= ',tagls(i,j)
+  125   format(a,f5.1,4x,a,f5.1,4x,a,f5.1,4xa,i3,4x,a,f2.0)
+      enddo
+
+      stop
+      end
+
+c--------------  end of code -----------------------------------------
+
+
+
+Following are the results of the above code when reading the file 
+for August 1993.  If your 'index' does not match the one 
+shown below, you have a newer analysis version and your SST and ice
+values likely will not match either.  Please feel free to 
+request the correct output for your version to ensure you are 
+reading the data correctly.
+
+---  Start Output 
+
+start date: 1993  8  1
+  end date: 1993  8 31
+  num days: 31
+     index: 1141070244
+
+lon = 180.5    lat =  89.5    sst =  -1.8    ice = 100    tagls= 1.
+lon = 180.5    lat =  88.5    sst =  -1.8    ice =  96    tagls= 1.
+lon = 180.5    lat =  87.5    sst =  -1.7    ice =  96    tagls= 1.
+lon = 180.5    lat =  86.5    sst =  -1.7    ice =  94    tagls= 1.
+lon = 180.5    lat =  85.5    sst =  -1.6    ice =  92    tagls= 1.
+lon = 180.5    lat =  84.5    sst =  -1.5    ice =  92    tagls= 1.
+lon = 180.5    lat =  83.5    sst =  -1.4    ice =  89    tagls= 1.
+lon = 180.5    lat =  82.5    sst =  -1.4    ice =  89    tagls= 1.
+lon = 180.5    lat =  81.5    sst =  -1.5    ice =  88    tagls= 1.
+lon = 180.5    lat =  80.5    sst =  -1.5    ice =  88    tagls= 1.
+lon = 180.5    lat =  79.5    sst =  -1.6    ice =  91    tagls= 1.
+lon = 180.5    lat =  78.5    sst =  -1.6    ice =  91    tagls= 1.
+lon = 180.5    lat =  77.5    sst =  -1.5    ice =  92    tagls= 1.
+lon = 180.5    lat =  76.5    sst =  -1.3    ice =  92    tagls= 1.
+lon = 180.5    lat =  75.5    sst =  -0.4    ice =  89    tagls= 1.
+lon = 180.5    lat =  74.5    sst =   1.0    ice =  61    tagls= 1.
+lon = 180.5    lat =  73.5    sst =   2.3    ice =   9    tagls= 1.
+lon = 180.5    lat =  72.5    sst =   3.0    ice =   4    tagls= 1.
+lon = 180.5    lat =  71.5    sst =   2.8    ice =   3    tagls= 1.
+lon = 180.5    lat =  70.5    sst =   2.5    ice =   1    tagls= 1.
+lon = 180.5    lat =  69.5    sst =   2.2    ice =   0    tagls= 1.
+lon = 180.5    lat =  68.5    sst =   2.7    ice = 122    tagls= 0.
+lon = 180.5    lat =  67.5    sst =   4.6    ice = 122    tagls= 0.
+lon = 180.5    lat =  66.5    sst =   8.1    ice = 122    tagls= 0.
+lon = 180.5    lat =  65.5    sst =   9.1    ice =   0    tagls= 1.
+lon = 180.5    lat =  64.5    sst =   8.5    ice =   0    tagls= 1.
+lon = 180.5    lat =  63.5    sst =   8.1    ice =   0    tagls= 1.
+lon = 180.5    lat =  62.5    sst =   8.1    ice =   0    tagls= 1.
+lon = 180.5    lat =  61.5    sst =   8.3    ice =   0    tagls= 1.
+lon = 180.5    lat =  60.5    sst =   8.8    ice =   0    tagls= 1.
+lon = 180.5    lat =  59.5    sst =   9.6    ice =   0    tagls= 1.
+
+---  End Output 
+
+
+Please note, a new climatology based on these fields was derived by Yan 
+Xue of NCEPs Climate Prediction Center following the technique of 
+Reynolds and Smith (1995) and Smith and Reynolds (1998).  The new 
+climatology is available in:
+
+
+   ftp://ftp.ncep.noaa.gov/pub/cpc/wd52yx/sstclim/
+
+
+
+For further information, contact:
+
+   Diane C. Stokes            
+
+   email:  Diane.Stokes@noaa.gov
+   Voice:  (301) 763-8000 extension 7581
+   FAX:    (301) 763-8125
+
+   Postal Address:
+     Climate Modeling Branch W/NP24
+     Environmental Modeling Center
+     National Centers for Environmental Prediction
+     World Weather Building, Room 807
+     5200 Auth Road
+     Camp Springs, MD 20746 USA
+
+
+UPDATED: 20 December 2001
+

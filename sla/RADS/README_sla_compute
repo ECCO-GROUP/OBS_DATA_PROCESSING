@@ -1,0 +1,52 @@
+..........................................................................
+     This directory includes programs for processing 
+         RADS sea surface height anomaly data
+	 for ECCO Version 4 
+..........................................................................
+
+  1)  on bay.mit.edu:
+        module add apps/rads/20130723
+        setenv RADSDATAROOT /net/barents/raid16/ross/raid2/king/RADS/data
+        setenv RSYNC_RSH ssh
+        setenv F_UFMTENDIAN 11
+
+  2)  update raw data:
+      /net/barents/raid16/ross/raid2/king/RADS/
+         sync_it_data    (RADS password = e2g1j1n1)
+	 sync_it_software
+
+  3)  RADS manual  
+      /net/barents/raid16/ross/raid2/king/RADS/text/manuals/manual.pdf
+
+..........................................................................
+
+  4) Programs: 
+
+
+     *  setup_v4.f                       raw -> along-track binary dataset
+         setup_v4_C2.input 
+	 setup_v4_GFO.input 
+	 setup_v4_TJ.input
+	 setup_v4_ERS_ENV.input 
+	 setup_v4_SA.input       
+
+     *  move each output file group into separate directory 
+          cryosat/, ers_env/, gfo/, saral/, topex_jason/
+
+     *  RADS_v4_step1.m                  setup for v4 interpolation
+                                         Delaunay method (same as previous)
+     *  RADS_v4_step2_r1.m               bin average to v4 grid,
+                                         make use of gcmfaces_bindata.m
+
+     *  call_rads_noice_mad_...m         remove outliers
+
+     *  rads_noice_mad_recompose.m       recompose into yearly datasets
+
+     *  RADS_stats.m                     plots data variance
+
+     *  RADS_plot_daily.m                plot of all satellite daily means.
+
+     *  remove the few odd days that show as spikes on daily mean plot.
+     
+     *  replace empty gfo (2011-2015) with cryosat data
+        replace empty ers_env (2013-2015) with saral data

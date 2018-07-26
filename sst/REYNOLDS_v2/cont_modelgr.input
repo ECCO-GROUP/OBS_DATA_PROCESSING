@@ -1,0 +1,10 @@
+-90 90 120 480
+120 480 60
+-60 60 60 3
+REYv2_sst_93-03
+Reynolds sst (deg.c) 1993 week 38 $
+ 
+37        ! still nskip
+t 2 f f f t f t f
+0 34 2 1 0             0 51 3 1 0
+

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set  RSYNC_PASSWORD e2g1j1n1
+rsync -avz --del radsuser@rads.tudelft.nl::rads/data .
+ln -s data/{nml,gs,e1,tx,pn,e2,g1,j1,n1,j2,c2,sa} .

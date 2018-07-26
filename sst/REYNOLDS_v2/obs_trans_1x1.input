@@ -1,0 +1,28 @@
+SST_monthly_92-03.dat
+/data17/NCEP_forcing/REYNOLDS/REY_temp1992_monav
+2 13
+/data17/NCEP_forcing/REYNOLDS/REY_temp1993_monav
+2 13
+/data17/NCEP_forcing/REYNOLDS/REY_temp1994_monav
+2 13
+/data17/NCEP_forcing/REYNOLDS/REY_temp1995_monav
+2 13
+/data17/NCEP_forcing/REYNOLDS/REY_temp1996_monav
+2 13
+/data17/NCEP_forcing/REYNOLDS/REY_temp1997_monav
+2 13
+/data17/NCEP_forcing/REYNOLDS/REY_temp1998_monav
+2 13
+/data17/NCEP_forcing/REYNOLDS/REY_temp1999_monav
+2 13
+/data17/NCEP_forcing/REYNOLDS/REY_temp2000_monav
+2 13
+/data17/NCEP_forcing/REYNOLDS/REY_temp2001_monav
+2 13
+REYv2_sst_02_monthly
+1 12
+REYv2_sst_03_monthly
+1 12
+REYv2_sst_04_monthly
+1 3
+END

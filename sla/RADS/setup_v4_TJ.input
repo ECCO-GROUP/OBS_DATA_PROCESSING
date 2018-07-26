@@ -1,0 +1,29 @@
+#topex_a 1993-8/2002    (363 last)    complete
+tx/a
+11 363
+1 254
+#topex_b 2002- 1/2006   (tandem)  (481 last)    complete
+tx/b
+369 481
+1 254
+#  jason_1a 2002 - 2009    (259 last)       complete
+j1/a
+21 259
+1 254
+#  jason_1b 2009 - 2012   (tandem):  (374 last)       complete
+j1/b
+262 374
+1 254
+#  jason_1c 2012 ... new orbit (382-425)   complete   (not used in ECCO run so far
+j1/c
+382 425
+1 280 
+#poseidon  1993-8/2002    (363 last)    complete
+pn/a
+11 363
+1 254
+# jason 2  2009 ...
+j2/a
+21 273
+1 254
+END
