@@ -16,3 +16,4 @@ The executable is setup_for_v4
 
 Combine monthly data to yearly data.
 sh -xv setup_for_v4.csh
+
