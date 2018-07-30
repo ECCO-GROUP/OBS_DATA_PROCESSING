@@ -10,9 +10,10 @@ mv podaac-ftp.jpl.nasa.gov/allData/avhrr/L4/reynolds_oi/v2/monthly/* .
 Then unzip the files by the following command:
 find . -name '*.gz' -exec unzip '{}' \;
 
-compile the Fortran code: 
+Compile the Fortran code: 
 sh -xv compile_setup_for_v4_pike.csh setup_for_v4
 The executable is setup_for_v4
 
 Combine monthly data to yearly data.
 sh -xv setup_for_v4.csh
+
