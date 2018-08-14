@@ -6,7 +6,9 @@ Example processing sequence for profile files that have already been formatting 
 by Ian Fenty, 08/13/2018
 
 
-This sequence was used to process profiles from NODC in May/June 2018.
+This sequence was used to process profiles from NODC in May/June 2018
+for use in llc90 or ll270 grids.
+
 NODC profiles were taken to the 'MITprof' format.  Before they can be
 used in the profiles package they need some additional fields.  These
 include
@@ -24,6 +26,10 @@ After that, I have two routines that merge profiles
 8. Merge profiles of a single type into several files each with n profile per file (or fewer)
 9. Merge profiles of a single type into a single file
 
+A new helper script writes the 'prof_gci' field.  This field isn't 
+used by the profile package and as far I can tell is only used for
+offline analysis.
+'update_prof_gci_on_prepared_profiles.m'
 
 
 
