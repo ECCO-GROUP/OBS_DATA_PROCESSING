@@ -1,0 +1,19 @@
+s00_01.nc - Annual
+
+s13_01.nc - Winter
+s14_01.nc - Spring
+s15_01.nc - Summer
+s16_01.nc - Autumn  
+
+s01_01.nc - January
+s02_01.nc - February
+s03_01.nc - March
+s04_01.nc - April
+s05_01.nc - May
+s06_01.nc - June
+s07_01.nc - July
+s08_01.nc - August
+s09_01.nc - September
+s10_01.nc - October
+s11_01.nc - November
+s12_01.nc - December 
